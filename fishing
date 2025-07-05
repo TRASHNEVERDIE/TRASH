@@ -1,6 +1,3 @@
--- TRASHNEVERDIE GUI - Final Version Fully Integrated
--- GUI Utama + GUI Menu (Main World & Event) + Tombol Toggle ON/OFF + Anti-AFK + Persist on Reset
-
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
