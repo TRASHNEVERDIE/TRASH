@@ -1,0 +1,140 @@
+-- TRASHNEVERDIE GUI FINAL (NO ESP)
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local RS = game:GetService("ReplicatedStorage")
+local CoreGui = game:GetService("CoreGui")
+local VirtualUser = game:GetService("VirtualUser")
+
+-- Proteksi Anti Kick
+pcall(function()
+	local mt = getrawmetatable(game)
+	setreadonly(mt, false)
+	local old = mt.__namecall
+	mt.__namecall = newcclosure(function(self, ...)
+		if getnamecallmethod() == "Kick" then return end
+		return old(self, ...)
+	end)
+	setreadonly(mt, true)
+end)
+
+-- Anti-AFK
+player.Idled:Connect(function()
+	VirtualUser:Button2Down(Vector2.zero, workspace.CurrentCamera.CFrame)
+	wait(1)
+	VirtualUser:Button2Up(Vector2.zero, workspace.CurrentCamera.CFrame)
+end)
+
+-- GUI
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "TRASHNEVERDIE_GUI"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 400)
+frame.Position = UDim2.new(0.5, -150, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame)
+
+local title = Instance.new("TextLabel", frame)
+title.Text = "TRASHNEVERDIE"
+title.Size = UDim2.new(1, -35, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextScaled = true
+
+local minimize = Instance.new("TextButton", frame)
+minimize.Size = UDim2.new(0, 30, 0, 30)
+minimize.Position = UDim2.new(1, -35, 0, 0)
+minimize.Text = "-"
+minimize.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+minimize.TextColor3 = Color3.new(1, 1, 1)
+
+local isMin = false
+local buttons = {}
+
+minimize.MouseButton1Click:Connect(function()
+	isMin = not isMin
+	frame.Size = isMin and UDim2.new(0, 300, 0, 50) or UDim2.new(0, 300, 0, 400)
+	for _, b in pairs(buttons) do b.Visible = not isMin end
+end)
+
+function MakeToggle(text, ypos, func)
+	local btn = Instance.new("TextButton", frame)
+	btn.Size = UDim2.new(0.9, 0, 0, 30)
+	btn.Position = UDim2.new(0.05, 0, 0, ypos)
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.Gotham
+	table.insert(buttons, btn)
+	local active = false
+	btn.MouseButton1Click:Connect(function()
+		active = not active
+		btn.BackgroundColor3 = active and Color3.fromRGB(0, 180, 0) or Color3.fromRGB(180, 0, 0)
+		func(active)
+	end)
+end
+
+-- GOD MODE
+MakeToggle("GOD MODE", 40, function(state)
+	_G.god = state
+	if state then
+		coroutine.wrap(function()
+			while _G.god do
+				local h = player.Character and player.Character:FindFirstChild("Humanoid")
+				if h then
+					h.Health = h.MaxHealth
+					h:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+				end
+				wait(0.5)
+			end
+		end)()
+	end
+end)
+
+-- INFINITY JUMP
+MakeToggle("INFINITY JUMP", 80, function(state)
+	_G.infjump = state
+end)
+UIS.JumpRequest:Connect(function()
+	if _G.infjump then
+		local h = player.Character and player.Character:FindFirstChildWhichIsA("Humanoid")
+		if h then h:ChangeState("Jumping") end
+	end
+end)
+
+-- SPEEDHACK
+MakeToggle("SPEEDHACK", 120, function(state)
+	local h = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+	if h then h.WalkSpeed = state and 200 or 16 end
+end)
+
+-- FLY (ANDROID VERSION)
+MakeToggle("FLY", 160, function(state)
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if root then
+		if state then
+			_G.flyBV = Instance.new("BodyVelocity", root)
+			_G.flyBV.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+			_G.flyBV.Velocity = Vector3.new(0, 40, 0)
+		else
+			if _G.flyBV then _G.flyBV:Destroy() end
+		end
+	end
+end)
+
+-- INVISIBLE / UNINVISIBLE
+MakeToggle("INVISIBLE", 200, function(state)
+	if player.Character then
+		for _, part in ipairs(player.Character:GetDescendants()) do
+			if part:IsA("BasePart") or part:IsA("Decal") then
+				part.Transparency = state and 1 or 0
+			end
+		end
+	end
+end)
