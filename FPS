@@ -1,0 +1,27 @@
+--[[ Protected Obfuscated FPS + Anti-AFK by TRASHNEVERDIE ]]--
+local k=game
+local v1,v2,v3,v4,v5="Players","RunService","VirtualUser","ScreenGui","TextLabel"
+local gS,LP=k:GetService(v1),k:GetService(v2)
+local vu=k:GetService(v3)
+local p=Instance.new(v4)local l=Instance.new(v5)
+
+p.Name="\70\80\83\70\108\111\97\116\105\110\103"p.ResetOnSpawn=false;p.Parent=gS.LocalPlayer:WaitForChild("PlayerGui")
+l.Size=UDim2.new(0,150,0,40)l.Position=UDim2.new(0,10,0,10)
+l.BackgroundTransparency=1;l.Text="FPS: ???"
+l.TextScaled=true;l.TextColor3=Color3.new(1,1,1)
+l.Font=Enum.Font.GothamBold;l.Parent=p;l.ZIndex=10
+l.Active=false;l.Selectable=false
+
+local a,b,c=0,0,tick()
+local function getColor(t)local s=math.sin(t)return Color3.fromRGB(s*127+128,math.sin(t+2)*127+128,math.sin(t+4)*127+128)end
+
+LP.RenderStepped:Connect(function()
+	a+=.05;l.TextColor3=getColor(a)
+	b+=1;if tick()-c>=1 then l.Text="FPS: "..b b=0;c=tick()end
+end)
+
+gS.LocalPlayer.Idled:Connect(function()
+	vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	task.wait(1)
+	vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
