@@ -1,4 +1,4 @@
--- TRASHNEVERDIE GUI FINAL (NO ESP)
+-- TRASHNEVERDIE HUB OPEN SOURCE
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
