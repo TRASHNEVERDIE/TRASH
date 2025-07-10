@@ -159,7 +159,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -171,7 +171,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -183,7 +183,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -195,7 +195,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -207,7 +207,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -219,7 +219,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -231,7 +231,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -244,7 +244,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
@@ -257,7 +257,7 @@ local function createCheckbox(text, parent)
                         }
                         for _, v in ipairs(coords) do
                             game.Players.LocalPlayer.Character:MoveTo(v)
-                            wait(2)
+                            wait(4)
                             if not isOn then break end
                         end
                         if isOn then waitUntilTouchedGround() end
