@@ -1,1 +1,312 @@
-local base64Code = "bG9jYWwgQ29yZUdpdCA9IGdhbWU6R2V0U2VydmljZSgiQ29yZUdpdCIpCmxvY2FsIFR3ZWVuU2VydmljZSA9IGdhbWU6R2V0U2VydmljZSgiVHdFZW5TZXJ2aWNlIikKCiBpZiBDb3JlR2l1OiZGaW5kRnJpc3RDaGlsZCgiVFJBU0hORVZFRERJRV9HVUkiKSB0aGVuCiAgICBDb3JlR2l1LlRSQVNITkVWRERJRV9HVUkuRGVzdHJveSgpCiAgZW5kCgpMb2NhbCBHVSAgPSBJbnN0YW5jZS5uZXcoc3RyaW5nKQpHVS5OYW1lID0gIlRSQVNITkVWRERJRV9HVUkiCkcuUmVzdE9uU3Bhd24gPSBmYWxzZQpHVS5QYXJlbnQgPSBDb3JlR2l1CgpMb2NhbCBNYWluRnJhbWUgPSBJbnN0YW5jZS5uZXcKCiAgICBNYWluRnJhbWUuU2l6ZSA9IFVESW0yLm5ldygwLCAzMjAsIDM1MCkKICAgIE1haW5GcmFtZS5Qb3NpdGlvbiA9IFVESW0yLm5ldygwLjMsIDAsIDAsIDApCk1haW5GcmFtZS5CYWNrc3BhY2VDb2xvciAzID0gQ29sb3I0LmZyb21SR0IodGhlbWUgPSBDb3JhbG9yQ3JpbmcuY29sb3JzKQpNYWluRnJhbWUuQm9yZGVyU2l6ZVBpeGVsID0gMCwKCiAgICBNYWluRnJhbWUuQ2xpcHNJbnN0YW5jZXMgPSB0cnVlCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0cnVlCiAgICBNYWluRnJhbWUuRGJhZ2F0ZSB0cmFuc3BhcmVudCA9IHRydWUKCiAgICBNYWluRnJhbWUuQ3VzdG9tZXIgPSB0
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+if CoreGui:FindFirstChild("TRASHNEVERDIE_GUI") then
+    CoreGui.TRASHNEVERDIE_GUI:Destroy()
+end
+
+local GUI = Instance.new("ScreenGui")
+GUI.Name = "TRASHNEVERDIE_GUI"
+GUI.ResetOnSpawn = false
+GUI.Parent = CoreGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 320, 0, 350)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = GUI
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+local Border = Instance.new("UIStroke")
+Border.Thickness = 2
+Border.Color = Color3.fromRGB(255, 0, 255)
+Border.Parent = MainFrame
+
+spawn(function()
+    local colors = {
+        Color3.fromRGB(255, 0, 255), Color3.fromRGB(0, 255, 255),
+        Color3.fromRGB(255, 255, 0), Color3.fromRGB(0, 255, 127),
+        Color3.fromRGB(255, 105, 180)
+    }
+    local i = 1
+    while true do
+        Border.Color = colors[i]
+        i = i % #colors + 1
+        wait(0.2)
+    end
+end)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 30)
+Title.Position = UDim2.new(0, 5, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "TRASHNEVERDIE MENU"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 30, 0, 30)
+MinBtn.Position = UDim2.new(1, -35, 0, 0)
+MinBtn.BackgroundTransparency = 1
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 18
+MinBtn.Parent = MainFrame
+
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, 0, 1, -30)
+Content.Position = UDim2.new(0, 0, 0, 30)
+Content.BackgroundTransparency = 1
+Content.Name = "Content"
+Content.Parent = MainFrame
+
+-- Label Select
+local SelectLabel = Instance.new("TextLabel")
+SelectLabel.Size = UDim2.new(1, -20, 0, 20)
+SelectLabel.Position = UDim2.new(0, 10, 0, 5)
+SelectLabel.BackgroundTransparency = 1
+SelectLabel.Text = "You have to choose your world's existence now."
+SelectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+SelectLabel.Font = Enum.Font.GothamBold
+SelectLabel.TextSize = 14
+SelectLabel.TextXAlignment = Enum.TextXAlignment.Left
+SelectLabel.Parent = Content
+
+-- Container Checkbox
+local CheckList = Instance.new("Frame")
+CheckList.Size = UDim2.new(1, -20, 0, 200)
+CheckList.Position = UDim2.new(0, 10, 0, 30)
+CheckList.BackgroundTransparency = 1
+CheckList.Parent = Content
+
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0, 5)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+Layout.Parent = CheckList
+
+local function waitUntilTouchedGround()
+    local char = game.Players.LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    while true do
+        local rayOrigin = hrp.Position
+        local rayDirection = Vector3.new(0, -5, 0)
+        local raycastParams = RaycastParams.new()
+        raycastParams.FilterDescendantsInstances = {char}
+        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+        local result = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+        if result then break end
+        task.wait(0.1)
+    end
+end
+
+-- Checkbox Function (multi-toggle)
+local function createCheckbox(text, parent)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 0, 22)
+    frame.BackgroundTransparency = 1
+    frame.Parent = parent
+
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 22, 0, 22)
+    btn.Position = UDim2.new(0, 0, 0, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.Text = ""
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 14
+    btn.Name = "CheckButton"
+    btn.Parent = frame
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 4)
+    corner.Parent = btn
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -30, 1, 0)
+    label.Position = UDim2.new(0, 30, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = Color3.new(1,1,1)
+    label.Font = Enum.Font.Gotham
+    label.TextSize = 14
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = frame
+
+    local isOn = false
+    btn.MouseButton1Click:Connect(function()
+        isOn = not isOn
+        if isOn then
+            btn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            print(text .. " aktif")
+            spawn(function()
+                while isOn do
+                    if text == "WORLD 1" then
+                        local coords = {
+                            Vector3.new(-3, 14414, -72),
+                            Vector3.new(-5, 14419, -115),
+                            Vector3.new(-4, 14403, -46),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 2" then
+                        local coords = {
+                            Vector3.new(4999, 14424, -73),
+                            Vector3.new(5000, 14418, -93),
+                            Vector3.new(5000, 14405, -52),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 3" then
+                        local coords = {
+                            Vector3.new(10003, 14424, -51),
+                            Vector3.new(10002, 14426, -85),
+                            Vector3.new(10001, 14404, -25),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 4" then
+                        local coords = {
+                            Vector3.new(14995, 14419, -149),
+                            Vector3.new(14997, 14419, -175),
+                            Vector3.new(14997, 14405, -126),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 5" then
+                        local coords = {
+                            Vector3.new(20004, 14427, -92),
+                            Vector3.new(20000, 14422, -136),
+                            Vector3.new(20000, 14404, -69),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 6" then
+                        local coords = {
+                            Vector3.new(25001, 14426, -48),
+                            Vector3.new(24997, 14435, -91),
+                            Vector3.new(25000, 14409, -31),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 7" then
+                        local coords = {
+                            Vector3.new(30000, 14423, -88),
+                            Vector3.new(30002, 14419, -135),
+                            Vector3.new(30000, 14405, -72),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 8" then
+                        local coords = {
+                            Vector3.new(34999, 14427, -53),
+                            Vector3.new(35000, 14423, -88),
+                            Vector3.new(35000, 14406, -89),
+                            Vector3.new(35000, 14406, -32),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    elseif text == "WORLD 9" then
+                        local coords = {
+                            Vector3.new(39999, 14402, -175),
+                            Vector3.new(39987, 14402, -207),
+                            Vector3.new(40000, 14402, -220),
+                            Vector3.new(39999, 14406, -167),
+                        }
+                        for _, v in ipairs(coords) do
+                            game.Players.LocalPlayer.Character:MoveTo(v)
+                            wait(2)
+                            if not isOn then break end
+                        end
+                        if isOn then waitUntilTouchedGround() end
+                    end
+                end
+            end)
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            print(text .. " nonaktif")
+        end
+    end)
+end
+
+for i = 1, 9 do
+    createCheckbox("WORLD " .. i, CheckList)
+end
+
+-- Deskripsi merah kecil
+local Desc = Instance.new("TextLabel")
+Desc.Size = UDim2.new(1, -20, 0, 40)
+Desc.Position = UDim2.new(0, 10, 1, -45)
+Desc.BackgroundTransparency = 1
+Desc.Text = "1.You have to reach the top of the tower first.\n2.Do not touch the ladder again when you want to activate it.\n3.If you have any bugs please report them to TikTok: TRASHNEVERDIE"
+Desc.TextColor3 = Color3.fromRGB(255, 0, 0)
+Desc.Font = Enum.Font.Gotham
+Desc.TextSize = 10
+Desc.TextWrapped = true
+Desc.TextYAlignment = Enum.TextYAlignment.Top
+Desc.TextXAlignment = Enum.TextXAlignment.Left
+Desc.Parent = Content
+
+local isMinimized = false
+MinBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    if isMinimized then
+        Content.Visible = false
+        MainFrame.Size = UDim2.new(0, 200, 0, 35)
+        Title.Text = "TRASHNEVERDIE"
+    else
+        Content.Visible = true
+        MainFrame.Size = UDim2.new(0, 320, 0, 350)
+        Title.Text = "TRASHNEVERDIE MENU"
+    end
+end)
+
+MainFrame.BackgroundTransparency = 1
+Title.TextTransparency = 1
+MinBtn.TextTransparency = 1
+
+TweenService:Create(MainFrame, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+TweenService:Create(Title, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+TweenService:Create(MinBtn, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
