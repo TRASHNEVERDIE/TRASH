@@ -176,17 +176,17 @@ local teleportCoords = {
         Vector3.new(-34, 10, 14812), Vector3.new(-35, 14408, 14808), Vector3.new(-36, 14411, 14776), Vector3.new(-35, 14407, 14818),
     },
     ["WORLD 10 (2)"] = {
-        Vector3.new(33, 9, 14812), Vector3.new(35, 14418, 14806), Vector3.new(33, 14410, 14775), Vector3.new(34, 14409, 14821),
+        Vector3.new(33, 18, 14812), Vector3.new(35, 14418, 14806), Vector3.new(33, 14410, 14775), Vector3.new(33, 14419, 14830),
     },
 }
 
 local isOn = true
 spawn(function()
-    while task.wait(1) do
+    while task.wait(3) do
         if selectedWorld and isOn and teleportCoords[selectedWorld] then
             for _, pos in ipairs(teleportCoords[selectedWorld]) do
                 Player.Character:MoveTo(pos)
-                task.wait(5)
+                task.wait(3)
                 if not isOn then break end
             end
             if isOn then waitUntilGround() end
