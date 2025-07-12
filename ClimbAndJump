@@ -1,5 +1,3 @@
--- TRASHNEVERDIE GUI V4.0 - Teleport Routine Structured by World & Delay Logic
-
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
