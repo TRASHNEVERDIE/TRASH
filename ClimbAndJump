@@ -186,7 +186,7 @@ spawn(function()
         if selectedWorld and isOn and teleportCoords[selectedWorld] then
             for _, pos in ipairs(teleportCoords[selectedWorld]) do
                 Player.Character:MoveTo(pos)
-                task.wait(3)
+                task.wait(5)
                 if not isOn then break end
             end
             if isOn then waitUntilGround() end
