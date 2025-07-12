@@ -1,3 +1,5 @@
+-- TRASHNEVERDIE GUI V4.0 - Teleport Routine Structured by World & Delay Logic
+
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -84,8 +86,8 @@ local options = {
     "WORLD 10 (1)", "WORLD 10 (2)"
 }
 
-local activeButton = nil
 local worldStates = {}
+local selectedWorld = nil
 
 local function makeCheckbox(name)
     local btn = Instance.new("TextButton")
@@ -108,6 +110,7 @@ local function makeCheckbox(name)
             end
         end
         worldStates[name] = not worldStates[name]
+        selectedWorld = worldStates[name] and name or nil
         btn.BackgroundColor3 = worldStates[name] and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(50, 50, 50)
     end)
 end
@@ -116,9 +119,9 @@ for _, name in ipairs(options) do
     makeCheckbox(name)
 end
 
--- FULL Minimize logic
 local isMinimized = false
 local fullSize = frame.Size
+
 local function toggleMinimize()
     isMinimized = not isMinimized
     for _, v in pairs(frame:GetChildren()) do
@@ -143,7 +146,7 @@ local function waitUntilGround()
     end
 end
 
-local teleportPoints = {
+local teleportCoords = {
     ["WORLD 1"] = {
         Vector3.new(-3, 14414, -72), Vector3.new(-5, 14419, -115), Vector3.new(-4, 14403, -46),
     },
@@ -175,24 +178,20 @@ local teleportPoints = {
         Vector3.new(-34, 10, 14812), Vector3.new(-35, 14408, 14808), Vector3.new(-36, 14411, 14776), Vector3.new(-35, 14407, 14818),
     },
     ["WORLD 10 (2)"] = {
-        Vector3.new(33, 10, 14812), Vector3.new(34, 14408, 14810), Vector3.new(33, 14410, 14774), Vector3.new(34, 14409, 14821),
+        Vector3.new(33, 9, 14812), Vector3.new(35, 14418, 14806), Vector3.new(33, 14410, 14775), Vector3.new(34, 14409, 14821),
     },
 }
 
+local isOn = true
 spawn(function()
-    while true do
-        task.wait(1)
-        for name, state in pairs(worldStates) do
-            if state and teleportPoints[name] then
-                for _, pos in ipairs(teleportPoints[name]) do
-                    Player.Character:MoveTo(pos)
-                    task.wait(4)
-                end
-                waitUntilGround()
+    while task.wait(1) do
+        if selectedWorld and isOn and teleportCoords[selectedWorld] then
+            for _, pos in ipairs(teleportCoords[selectedWorld]) do
+                Player.Character:MoveTo(pos)
                 task.wait(3)
+                if not isOn then break end
             end
+            if isOn then waitUntilGround() end
         end
     end
 end)
-
-print("[TRASHNEVERDIE_GUI_V3.7] Minimize fixed fully + toggle working")
