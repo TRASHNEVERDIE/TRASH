@@ -1,0 +1,148 @@
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "TRASHNEVERDIE"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- Main Frame
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 250, 0, 150)
+frame.Position = UDim2.new(0.5, -125, 0.5, -75)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.BorderSizePixel = 0
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundTransparency = 1
+frame.Active = true
+frame.Draggable = true
+
+-- Glow Effect
+local uiStroke = Instance.new("UIStroke", frame)
+uiStroke.Color = Color3.fromRGB(200, 0, 255)
+uiStroke.Thickness = 2
+uiStroke.Transparency = 0.2
+
+-- Corner
+local uicorner = Instance.new("UICorner", frame)
+uicorner.CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Text = "TRASHNEVERDIE"
+title.Size = UDim2.new(1, -40, 0, 30)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Name = "Title"
+
+-- Minimize Button
+local minimize = Instance.new("TextButton", frame)
+minimize.Text = "-"
+minimize.Size = UDim2.new(0, 30, 0, 30)
+minimize.Position = UDim2.new(1, -35, 0, 5)
+minimize.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimize.Font = Enum.Font.GothamBold
+minimize.TextSize = 18
+minimize.Name = "Minimize"
+
+local minCorner = Instance.new("UICorner", minimize)
+minCorner.CornerRadius = UDim.new(0, 6)
+
+-- Toggle Button
+local toggle = Instance.new("TextButton", frame)
+toggle.Name = "AutoCoinToggle"
+toggle.Text = "AUTO COIN [OFF]"
+toggle.Size = UDim2.new(0, 200, 0, 40)
+toggle.Position = UDim2.new(0.5, -100, 0.5, -20)
+toggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggle.Font = Enum.Font.GothamBold
+toggle.TextSize = 16
+
+local toggleCorner = Instance.new("UICorner", toggle)
+toggleCorner.CornerRadius = UDim.new(0, 10)
+
+local toggleStroke = Instance.new("UIStroke", toggle)
+toggleStroke.Color = Color3.fromRGB(255, 255, 255)
+toggleStroke.Thickness = 1
+
+-- Fade in animasi saat GUI muncul
+TweenService:Create(frame, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+
+-- Minimize Logic
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		for _, child in ipairs(frame:GetChildren()) do
+			if child:IsA("GuiObject") and child.Name ~= "Minimize" and child.Name ~= "Title" then
+				child.Visible = false
+			end
+		end
+		frame:TweenSize(UDim2.new(0, 250, 0, 40), "Out", "Sine", 0.3, true)
+	else
+		for _, child in ipairs(frame:GetChildren()) do
+			if child:IsA("GuiObject") then
+				child.Visible = true
+			end
+		end
+		frame:TweenSize(UDim2.new(0, 250, 0, 150), "Out", "Sine", 0.3, true)
+	end
+end)
+
+-- AUTO COIN FUNCTION
+local isActive = false
+local autoCoinRunning = false
+
+local function teleportLoop()
+	autoCoinRunning = true
+	while isActive and autoCoinRunning do
+		local character = player.Character or player.CharacterAdded:Wait()
+		local hrp = character:WaitForChild("HumanoidRootPart")
+		local humanoid = character:WaitForChild("Humanoid")
+
+		local points = {
+			Vector3.new(-18, 4, -5057),     -- Awalan
+			Vector3.new(-18, 14420, -5063), -- Atas
+			Vector3.new(-16, 14423, -5118), -- Piala
+			Vector3.new(-22, 14411, -5019), -- Part akhir
+		}
+
+		for _, pos in ipairs(points) do
+			if not isActive then break end
+			hrp.CFrame = CFrame.new(pos)
+			task.wait(4)
+		end
+
+		-- Tunggu sampai menyentuh tanah
+		if humanoid then
+			repeat
+				task.wait(0.2)
+			until humanoid.FloorMaterial ~= Enum.Material.Air or not isActive
+		end
+
+		task.wait(3)
+	end
+end
+
+-- Toggle Logic
+toggle.MouseButton1Click:Connect(function()
+	isActive = not isActive
+	if isActive then
+		toggle.Text = "AUTO COIN [ON]"
+		toggle.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+		if not autoCoinRunning then
+			task.spawn(teleportLoop)
+		end
+	else
+		toggle.Text = "AUTO COIN [OFF]"
+		toggle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+		autoCoinRunning = false
+	end
+end)
