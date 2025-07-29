@@ -1,5 +1,209 @@
-local HttpService = game:GetService("HttpService")
-local encoded = "CmxvY2FsIFBsYXllcnMgPSBnYW1lOkdldFNlcnZpY2UoIlBsYXllcnMiKQpsb2NhbCBVc2VySW5wdXRTZXJ2aWNlID0gZ2FtZTpHZXRTZXJ2aWNlKCJVc2VySW5wdXRTZXJ2aWNlIikKbG9jYWwgUnVuU2VydmljZSA9IGdhbWU6R2V0U2VydmljZSgiUnVuU2VydmljZSIpCmxvY2FsIHBsYXllciA9IFBsYXllcnMuTG9jYWxQbGF5ZXIKbG9jYWwgQ29yZUd1aSA9IGdhbWU6R2V0U2VydmljZSgiQ29yZUd1aSIpCmxvY2FsIFR3ZWVuU2VydmljZSA9IGdhbWU6R2V0U2VydmljZSgiVHdlZW5TZXJ2aWNlIikKaWYgQ29yZUd1aTpGaW5kRmlyc3RDaGlsZCgiVFJBU0hORVZFUkRJRSIpIHRoZW4gQ29yZUd1aS5UUkFTSE5FVkVSRElFOkRlc3Ryb3koKQpsb2NhbCBTY3JlZW5HdWkgPSBJbnN0YW5jZS5uZXcoIlNjcmVlbkd1aSIpClNjcmVlbkd1aS5OYW1lID0gIlRSQVNITkVWRVJESUUiClNjcmVlbkd1aS5QYXJlbnQgPSBDb3JlR3VpClNjcmVlbkd1aS5SZXNldE9uU3Bhd24gPSBmYWxzZQpsb2NhbCBNYWluRnJhbWUgPSBJbnN0YW5jZS5uZXcoIkZyYW1lIikK..."
+-- TRASHNEVERDIE GUI Script
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
 
-local source = HttpService:Base64Decode(encoded)
-loadstring(source)()
+-- Hapus GUI jika sudah ada
+if CoreGui:FindFirstChild("TRASHNEVERDIE") then
+    CoreGui.TRASHNEVERDIE:Destroy()
+end
+
+-- GUI Utama
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TRASHNEVERDIE"
+ScreenGui.Parent = CoreGui
+ScreenGui.ResetOnSpawn = false
+
+-- Frame utama
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 300, 0, 250)
+MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.BackgroundTransparency = 0.3
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+-- Border animasi (warna-warni)
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 12)
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Thickness = 2
+UIStroke.Transparency = 0.3
+UIStroke.Parent = MainFrame
+spawn(function()
+    while true do
+        UIStroke.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        wait(0.1)
+    end
+end)
+
+-- Fade In animasi
+MainFrame.BackgroundTransparency = 1
+TweenService:Create(MainFrame, TweenInfo.new(1), {BackgroundTransparency = 0.3}):Play()
+
+-- Judul
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "TRASHNEVERDIE"
+Title.Font = Enum.Font.GothamBlack
+Title.TextSize = 20
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Parent = MainFrame
+Title.ZIndex = 2
+
+-- Rainbow judul
+spawn(function()
+    while true do
+        Title.TextColor3 = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        wait(1)
+    end
+end)
+
+-- Tombol Minimize
+local Minimize = Instance.new("TextButton")
+Minimize.Size = UDim2.new(0, 30, 0, 30)
+Minimize.Position = UDim2.new(1, -35, 0, 0)
+Minimize.Text = "-"
+Minimize.Font = Enum.Font.GothamBold
+Minimize.TextSize = 20
+Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+Minimize.BackgroundTransparency = 1
+Minimize.BorderSizePixel = 0
+Minimize.ZIndex = 2
+Minimize.Parent = MainFrame
+Minimize.Active = true
+Minimize.AutoButtonColor = true
+
+local isMinimized = false
+Minimize.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    for _,v in pairs(MainFrame:GetChildren()) do
+        if v:IsA("GuiObject") and v ~= Title and v ~= Minimize then
+            v.Visible = not isMinimized
+        end
+    end
+    MainFrame.Size = isMinimized and UDim2.new(0, 300, 0, 30) or UDim2.new(0, 300, 0, 250)
+end)
+
+-- Tombol AUTO SUMMIT
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0.8, 0, 0, 40)
+ToggleButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+ToggleButton.Text = "AUTO SUMMIT [OFF]"
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextSize = 16
+ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 150, 100)
+ToggleButton.Parent = MainFrame
+
+local autoSummitEnabled = false
+ToggleButton.MouseButton1Click:Connect(function()
+    autoSummitEnabled = not autoSummitEnabled
+    ToggleButton.Text = autoSummitEnabled and "AUTO SUMMIT [ON]" or "AUTO SUMMIT [OFF]"
+    ToggleButton.BackgroundColor3 = autoSummitEnabled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(0, 150, 100)
+end)
+
+-- Tombol AUTO SUMMIT NEW
+local ExtraToggle = Instance.new("TextButton")
+ExtraToggle.Size = UDim2.new(0.8, 0, 0, 30)
+ExtraToggle.Position = UDim2.new(0.1, 0, 0.55, 0)
+ExtraToggle.Text = "AUTO SUMMIT NEW [OFF]"
+ExtraToggle.Font = Enum.Font.GothamBold
+ExtraToggle.TextSize = 14
+ExtraToggle.TextColor3 = Color3.fromRGB(255,255,255)
+ExtraToggle.BackgroundColor3 = Color3.fromRGB(100, 100, 200)
+ExtraToggle.Parent = MainFrame
+
+local extraToggleEnabled = false
+ExtraToggle.MouseButton1Click:Connect(function()
+    extraToggleEnabled = not extraToggleEnabled
+    ExtraToggle.Text = extraToggleEnabled and "AUTO SUMMIT NEW [ON]" or "AUTO SUMMIT NEW [OFF]"
+    ExtraToggle.BackgroundColor3 = extraToggleEnabled and Color3.fromRGB(0, 120, 255) or Color3.fromRGB(100, 100, 200)
+
+    if extraToggleEnabled then
+        coroutine.wrap(function()
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-11818, 4204, 132))
+                wait(1)
+                local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.Health = 0
+                end
+                repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                wait(5)
+                player.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-11818, 4204, 132))
+                wait(3)
+                ToggleButton:Activate()
+            end
+        end)()
+    end
+end)
+
+-- FPS Display
+local FPSLabel = Instance.new("TextLabel")
+FPSLabel.Size = UDim2.new(0.8, 0, 0, 20)
+FPSLabel.Position = UDim2.new(0.1, 0, 0.8, 0)
+FPSLabel.BackgroundTransparency = 1
+FPSLabel.Text = "FPS: 0"
+FPSLabel.Font = Enum.Font.GothamBold
+FPSLabel.TextSize = 14
+FPSLabel.TextColor3 = Color3.fromRGB(255,255,255)
+FPSLabel.Parent = MainFrame
+
+spawn(function()
+    local lastTime = tick()
+    local frameCount = 0
+    while true do
+        frameCount = frameCount + 1
+        local now = tick()
+        if now - lastTime >= 1 then
+            FPSLabel.Text = "FPS: " .. frameCount
+            FPSLabel.TextColor3 = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+            frameCount = 0
+            lastTime = now
+        end
+        RunService.RenderStepped:Wait()
+    end
+end)
+
+-- AUTO TELEPORT FUNCTION + RESET KARAKTER + TUNGGU SPAWN
+local coords = {
+    Vector3.new(1194, 1653, -5597),
+    Vector3.new(789, 2220, -6610),
+    Vector3.new(2946, 2593, -6726),
+    Vector3.new(2871, 2597, -6691),
+}
+
+spawn(function()
+    while true do
+        if autoSummitEnabled and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            for i, pos in ipairs(coords) do
+                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
+                    wait(3)
+                end
+                if i == #coords then
+                    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then humanoid.Health = 0 end
+                    repeat wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+                    wait(5)
+                end
+            end
+        end
+        wait(1)
+    end
+end)
+
+-- ANTI-AFK
+player.Idled:Connect(function()
+    local VirtualUser = game:GetService("VirtualUser")
+    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
