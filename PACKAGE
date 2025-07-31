@@ -1,0 +1,145 @@
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+--// GUI Parent
+local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "TRASHNEVERDIE_GUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+
+--// Main Frame
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 250, 0, 180)
+MainFrame.Position = UDim2.new(0.5, -125, 0.5, -90)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true -- penting supaya konten tidak “ngintip” saat dikecilkan
+
+-- UICorner + UIStroke
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new("UIStroke", MainFrame)
+stroke.Color = Color3.fromRGB(255, 0, 255)
+stroke.Thickness = 2
+
+--// Title (nama script)
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Name = "Title"
+Title.Size = UDim2.new(1, -35, 0, 30)
+Title.Position = UDim2.new(0, 8, 0, 3)
+Title.BackgroundTransparency = 1
+Title.Text = "TRASHNEVERDIE - HUB"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+--// Tombol Minimize (selalu terlihat)
+local Minimize = Instance.new("TextButton", MainFrame)
+Minimize.Name = "Minimize"
+Minimize.Size = UDim2.new(0, 25, 0, 25)
+Minimize.Position = UDim2.new(1, -30, 0, 2)
+Minimize.Text = "-"
+Minimize.Font = Enum.Font.GothamBold
+Minimize.TextSize = 18
+Minimize.BackgroundColor3 = Color3.fromRGB(40, 0, 40)
+Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", Minimize).CornerRadius = UDim.new(0, 8)
+
+--// Tombol Toggle
+local Toggle = Instance.new("TextButton", MainFrame)
+Toggle.Name = "ToggleButton"
+Toggle.Size = UDim2.new(0, 200, 0, 30)
+Toggle.Position = UDim2.new(0.5, -100, 0, 45)
+Toggle.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Toggle.Text = "AUTO FREE PACKAGE [OFF]"
+Toggle.TextColor3 = Color3.fromRGB(255, 0, 0)
+Toggle.Font = Enum.Font.GothamBold
+Toggle.TextSize = 14
+Instance.new("UICorner", Toggle).CornerRadius = UDim.new(0, 8)
+
+--// Deskripsi (rainbow)
+local Description = Instance.new("TextLabel", MainFrame)
+Description.Name = "Description"
+Description.Size = UDim2.new(1, -20, 0, 30)
+Description.Position = UDim2.new(0, 10, 0, 82)
+Description.BackgroundTransparency = 1
+Description.Text = "Auto Getting Free Package!"
+Description.TextColor3 = Color3.fromRGB(255, 0, 0)
+Description.Font = Enum.Font.GothamSemibold
+Description.TextSize = 13
+Description.TextWrapped = true
+
+-- Rainbow animation (warna-warni tiap detik)
+task.spawn(function()
+	while true do
+		for hue = 0, 1, 0.01 do
+			-- bila minimized, boleh skip update untuk hemat, tapi tetap aman
+			if Description.Visible then
+				Description.TextColor3 = Color3.fromHSV(hue, 1, 1)
+			end
+			task.wait(0.05)
+		end
+	end
+end)
+
+--// Logic Auto Free Package
+getgenv().farm_envelopes = false
+local isEnabled = false
+
+Toggle.MouseButton1Click:Connect(function()
+	isEnabled = not isEnabled
+	getgenv().farm_envelopes = isEnabled
+
+	if isEnabled then
+		Toggle.Text = "AUTO FREE PACKAGE [ON]"
+		Toggle.TextColor3 = Color3.fromRGB(0, 255, 0)
+		print("Auto Free Package Aktif!")
+		task.spawn(function()
+			while getgenv().farm_envelopes do
+				ReplicatedStorage:WaitForChild("GivePackageRemote"):FireServer()
+				task.wait(1)
+			end
+		end)
+	else
+		Toggle.Text = "AUTO FREE PACKAGE [OFF]"
+		Toggle.TextColor3 = Color3.fromRGB(255, 0, 0)
+		print("Auto Free Package Nonaktif!")
+	end
+end)
+
+--// Minimize Logic (hanya tampilkan Title + Minimize, frame mengecil)
+local minimized = false
+local originalSize = MainFrame.Size
+local minimizedSize = UDim2.new(originalSize.X.Scale, originalSize.X.Offset, 0, 36) -- tinggi bar judul
+
+local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+local function setChildrenVisible(visible)
+	for _, child in ipairs(MainFrame:GetChildren()) do
+		-- Tampilkan hanya Title dan Minimize saat minimize
+		if child:IsA("GuiObject") and child ~= Title and child ~= Minimize then
+			child.Visible = visible
+		end
+	end
+end
+
+Minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	Minimize.Text = minimized and "+" or "-"
+
+	if minimized then
+		-- Sembunyikan semua kecuali Title & Minimize, lalu kecilkan frame
+		setChildrenVisible(false)
+		TweenService:Create(MainFrame, tweenInfo, {Size = minimizedSize}):Play()
+	else
+		-- Kembalikan ukuran dan tampilkan konten
+		TweenService:Create(MainFrame, tweenInfo, {Size = originalSize}):Play()
+		-- Tunda dikit agar ukuran sudah kembali sebelum show
+		task.delay(0.2, function()
+			setChildrenVisible(true)
+		end)
+	end
+end)
