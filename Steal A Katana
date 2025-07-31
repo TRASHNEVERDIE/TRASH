@@ -1,0 +1,406 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local SoundService = game:GetService("SoundService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+
+if CoreGui:FindFirstChild("TRASHNEVERDIE_GUI") then
+	CoreGui.TRASHNEVERDIE_GUI:Destroy()
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "TRASHNEVERDIE_GUI"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = CoreGui
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 400, 0, 320)
+mainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.Active = true
+mainFrame.Parent = gui
+
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 8)
+
+local glowStroke = Instance.new("UIStroke")
+glowStroke.Thickness = 3
+glowStroke.Transparency = 0
+glowStroke.Color = Color3.fromRGB(255, 0, 255)
+glowStroke.Parent = mainFrame
+
+task.spawn(function()
+	local colors = {
+		Color3.fromRGB(255, 0, 255),
+		Color3.fromRGB(0, 255, 255),
+		Color3.fromRGB(0, 255, 0),
+		Color3.fromRGB(255, 255, 0),
+		Color3.fromRGB(255, 0, 0)
+	}
+	local index = 1
+	while gui and gui.Parent do
+		TweenService:Create(glowStroke, TweenInfo.new(0.5), { Color = colors[index] }):Play()
+		index = (index % #colors) + 1
+		task.wait(0.5)
+	end
+end)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 40)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "TRASHNEVERDIE HUB"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = mainFrame
+
+local miniBtn = Instance.new("TextButton")
+miniBtn.Size = UDim2.new(0, 30, 0, 30)
+miniBtn.Position = UDim2.new(1, -35, 0, 5)
+miniBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+miniBtn.Text = "-"
+miniBtn.TextColor3 = Color3.new(1, 1, 1)
+miniBtn.Font = Enum.Font.GothamBold
+miniBtn.TextSize = 20
+Instance.new("UICorner", miniBtn)
+miniBtn.Parent = mainFrame
+
+local clickSound = Instance.new("Sound")
+clickSound.SoundId = "rbxassetid://9118823102"
+clickSound.Volume = 2
+clickSound.Parent = SoundService
+local function playClick() pcall(function() clickSound:Play() end) end
+
+local function notify(text)
+	local n = Instance.new("TextLabel")
+	n.Size = UDim2.new(0, 280, 0, 40)
+	n.Position = UDim2.new(0.5, -140, 0.85, 0)
+	n.BackgroundTransparency = 0.3
+	n.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	n.Text = text
+	n.TextColor3 = Color3.new(1, 1, 1)
+	n.Font = Enum.Font.Gotham
+	n.TextSize = 18
+	n.TextStrokeTransparency = 0.7
+	Instance.new("UICorner", n)
+	n.Parent = gui
+	task.delay(3, function() if n then n:Destroy() end end)
+end
+
+local list = Instance.new("Frame")
+list.Position = UDim2.new(0, 10, 0, 50)
+list.Size = UDim2.new(1, -20, 1, -60)
+list.BackgroundTransparency = 1
+list.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 6)
+layout.Parent = list
+
+local miniBar = Instance.new("Frame")
+miniBar.Visible = false
+miniBar.BackgroundTransparency = 1
+miniBar.Size = UDim2.new(1, -20, 0, 40)
+miniBar.Position = UDim2.new(0, 10, 1, -45)
+miniBar.Parent = mainFrame
+
+local miniLayout = Instance.new("UIListLayout")
+miniLayout.FillDirection = Enum.FillDirection.Horizontal
+miniLayout.Padding = UDim.new(0, 6)
+miniLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+miniLayout.Parent = miniBar
+
+local COLOR_DEFAULT = Color3.fromRGB(60, 60, 80)
+local COLOR_ON = Color3.fromRGB(0, 170, 0)
+
+local function createActionButton(text, callback)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 35)
+	btn.BackgroundColor3 = COLOR_DEFAULT
+	btn.Text = text
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.GothamSemibold
+	btn.TextSize = 16
+	btn.AutoButtonColor = true
+	Instance.new("UICorner", btn)
+	btn.Parent = list
+	btn.MouseButton1Click:Connect(function()
+		playClick()
+		callback()
+	end)
+	return btn
+end
+
+local function createMiniChip(label)
+	local chip = Instance.new("TextButton")
+	chip.AutoButtonColor = true
+	chip.Text = label
+	chip.Font = Enum.Font.GothamSemibold
+	chip.TextSize = 14
+	chip.TextColor3 = Color3.new(1, 1, 1)
+	chip.Size = UDim2.new(0, 120, 1, 0)
+	chip.BackgroundColor3 = COLOR_DEFAULT
+	Instance.new("UICorner", chip).CornerRadius = UDim.new(0, 8)
+	chip.Parent = miniBar
+	return chip
+end
+
+local toggles = {} -- [key] = { state, mainBtn, miniBtn, onEnable, onDisable, applyVisual }
+
+local function createToggle(key, label, onEnable, onDisable)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 35)
+	btn.BackgroundColor3 = COLOR_DEFAULT
+	btn.Text = label
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.GothamSemibold
+	btn.TextSize = 16
+	btn.AutoButtonColor = true
+	Instance.new("UICorner", btn)
+	btn.Parent = list
+
+	local chip = createMiniChip(label)
+
+	local function applyVisual(state)
+		btn.BackgroundColor3 = state and COLOR_ON or COLOR_DEFAULT
+		chip.BackgroundColor3 = state and COLOR_ON or COLOR_DEFAULT
+	end
+
+	toggles[key] = {
+		state = false,
+		mainBtn = btn,
+		miniBtn = chip,
+		onEnable = onEnable,
+		onDisable = onDisable,
+		applyVisual = applyVisual,
+	}
+
+	local function toggle()
+		local t = toggles[key]
+		t.state = not t.state
+		applyVisual(t.state)
+		if t.state then
+			onEnable()
+		else
+			onDisable()
+		end
+		playClick()
+	end
+
+	btn.MouseButton1Click:Connect(toggle)
+	chip.MouseButton1Click:Connect(toggle)
+
+	return btn
+end
+
+local minimized = false
+local HEADER_HEIGHT = 50
+local function setMinimized(isMin)
+	minimized = isMin
+	if minimized then
+		-- Hanya tampil judul + tombol minimize
+		mainFrame:TweenSize(UDim2.new(0, 400, 0, HEADER_HEIGHT), "Out", "Quad", 0.25, true)
+		list.Visible = false
+		miniBar.Visible = false -- <== disembunyikan saat minimize
+		miniBtn.Text = "+"
+	else
+		mainFrame:TweenSize(UDim2.new(0, 400, 0, 320), "Out", "Quad", 0.25, true)
+		list.Visible = true
+		miniBar.Visible = false -- <== tetap disembunyikan sesuai permintaan
+		miniBtn.Text = "-"
+	end
+end
+
+miniBtn.MouseButton1Click:Connect(function()
+	setMinimized(not minimized)
+	playClick()
+end)
+
+do
+	local dragging = false
+	local dragStart, startPos
+
+	local function onInputBegan(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = mainFrame.Position
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end
+
+	local function onInputChanged(input)
+		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch) then
+			local delta = input.Position - dragStart
+			mainFrame.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + delta.X,
+				startPos.Y.Scale, startPos.Y.Offset + delta.Y
+			)
+		end
+	end
+
+	mainFrame.InputBegan:Connect(onInputBegan)
+	mainFrame.InputChanged:Connect(onInputChanged)
+end
+
+-- ========================
+--  T R A S H N E V E R D I E.
+-- ========================
+
+local DEFAULT_WALK = 16
+local BOOST_WALK = 60
+local function applySpeed(state)
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then hum.WalkSpeed = state and BOOST_WALK or DEFAULT_WALK end
+end
+createToggle("speed","Speed Boost",
+	function() applySpeed(true); notify("Speed: ON") end,
+	function() applySpeed(false); notify("Speed: OFF") end
+)
+
+local noclipConn, noclipAddConn
+local originalCollide = {}
+local function setAllCanCollide(char, value)
+	for _, v in ipairs(char:GetDescendants()) do
+		if v:IsA("BasePart") then
+			if value == false then
+				originalCollide[v] = v.CanCollide
+				v.CanCollide = false
+			else
+				local orig = originalCollide[v]
+				if orig ~= nil then v.CanCollide = orig else v.CanCollide = true end
+			end
+		end
+	end
+end
+createToggle("noclip","No Clip",
+	function()
+		local char = player.Character or player.CharacterAdded:Wait()
+		table.clear(originalCollide)
+		setAllCanCollide(char, false)
+		noclipAddConn = char.DescendantAdded:Connect(function(d)
+			if d:IsA("BasePart") then originalCollide[d] = d.CanCollide; d.CanCollide = false end
+		end)
+		noclipConn = RunService.Stepped:Connect(function()
+			if not char or not char.Parent then return end
+			for part in pairs(originalCollide) do
+				if part and part:IsA("BasePart") then part.CanCollide = false end
+			end
+		end)
+		notify("No Clip: ON")
+	end,
+	function()
+		if noclipAddConn then noclipAddConn:Disconnect(); noclipAddConn = nil end
+		if noclipConn then noclipConn:Disconnect(); noclipConn = nil end
+		local char = player.Character
+		if char then setAllCanCollide(char, true) end
+		table.clear(originalCollide)
+		notify("No Clip: OFF")
+	end
+)
+
+createActionButton("STEALING (BETA)", function()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+	local original = hrp.CFrame
+	notify("Stealing...")
+	task.wait(0.25)
+	for _, part in ipairs(workspace:GetDescendants()) do
+		if part:IsA("BasePart") and part.Name:lower():find("collect") then
+			hrp.CFrame = part.CFrame + Vector3.new(0, 3, 0)
+			task.wait(0.15)
+		end
+	end
+	hrp.CFrame = original
+	notify("Katana stolen")
+end)
+
+local jumpConn
+createToggle("infjump","Infinity Jump",
+	function()
+		jumpConn = game:GetService("UserInputService").JumpRequest:Connect(function()
+			local char = player.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if hum and hum.Health > 0 then
+				hum:ChangeState(Enum.HumanoidStateType.Jumping)
+			end
+		end)
+		notify("Infinity Jump: ON")
+	end,
+	function()
+		if jumpConn then jumpConn:Disconnect(); jumpConn = nil end
+		notify("Infinity Jump: OFF")
+	end
+)
+
+local gmConns = {}
+local DEFAULT_MAX = 100
+local function disconnectAll(t)
+	for k, conn in pairs(t) do
+		if typeof(conn) == "RBXScriptConnection" then conn:Disconnect() end
+		t[k] = nil
+	end
+end
+local function ensureForceField(char)
+	local ff = char:FindFirstChildOfClass("ForceField")
+	if not ff then ff = Instance.new("ForceField"); ff.Visible = false; ff.Parent = char end
+	return ff
+end
+local function enableGodMode()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if not hum then return end
+	ensureForceField(char)
+	if hum.MaxHealth > 0 then DEFAULT_MAX = hum.MaxHealth end
+	hum.BreakJointsOnDeath = false
+	hum.MaxHealth = 1e9
+	hum.Health = hum.MaxHealth
+	gmConns.health = hum:GetPropertyChangedSignal("Health"):Connect(function()
+		if hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+	end)
+	gmConns.state = hum.StateChanged:Connect(function(_, new)
+		if new == Enum.HumanoidStateType.Dead then
+			hum:ChangeState(Enum.HumanoidStateType.Running)
+			hum.Health = hum.MaxHealth
+		end
+	end)
+	gmConns.hb = RunService.Heartbeat:Connect(function()
+		if not char.Parent then return end
+		if not char:FindFirstChildOfClass("ForceField") then ensureForceField(char) end
+		if hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+	end)
+end
+local function disableGodMode()
+	disconnectAll(gmConns)
+	local char = player.Character
+	if not char then return end
+	local hum = char:FindFirstChildOfClass("Humanoid")
+	if hum then hum.MaxHealth = DEFAULT_MAX or 100; hum.Health = hum.MaxHealth end
+	local ff = char:FindFirstChildOfClass("ForceField"); if ff then ff:Destroy() end
+end
+createToggle("godmode","GOD MODE",
+	function() enableGodMode(); notify("GOD MODE: ON") end,
+	function() disableGodMode(); notify("GOD MODE: OFF") end
+)
+
+-- Re-apply toggle saat respawn
+player.CharacterAdded:Connect(function()
+	task.wait(0.25)
+	for _, t in pairs(toggles) do
+		if t.state then pcall(t.onEnable); t.applyVisual(true) end
+	end
+end)
+
+setMinimized(false)
