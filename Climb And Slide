@@ -1,0 +1,165 @@
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local char = string.char
+local task_wait = getfenv()[char(116,97,115,107)].wait
+
+-- Variabel global
+local selectedMap = "Map_1"
+local autoSlider = false
+
+-- Fungsi Get Best Pet
+local function giveBestPet()
+    local remote = RS:FindFirstChild("R_Pets")
+    if remote then
+        remote:FireServer("Give_Pet", "Pet_Honey_Mutant")
+    end
+end
+
+-- Fungsi Auto Coins
+local function autoCoinFunc()
+    while _G.autoSlider do
+        local maps = workspace:FindFirstChild("Maps")
+        if maps then
+            local map = maps:FindFirstChild(selectedMap)
+            local remote = RS:FindFirstChild("R_Server")
+            if map and remote then
+                pcall(function()
+                    remote:FireServer("Slide", map)
+                end)
+            end
+        end
+        task_wait(0.5)
+    end
+end
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "TRASHNEVERDIE_GUI"
+ScreenGui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 380, 0, 260)
+Frame.Position = UDim2.new(0.5, -190, 0.5, -130)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Frame.BackgroundTransparency = 0.05
+
+-- Border glow
+local UIStroke = Instance.new("UIStroke", Frame)
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(255, 0, 255)
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke.Transparency = 0.2
+
+local corner = Instance.new("UICorner", Frame)
+corner.CornerRadius = UDim.new(0, 10)
+
+-- Title
+local Title = Instance.new("TextLabel", Frame)
+Title.Text = "TRASHNEVERDIE"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
+Title.Size = UDim2.new(1, -40, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Minimize Button
+local Minimize = Instance.new("TextButton", Frame)
+Minimize.Size = UDim2.new(0, 30, 0, 30)
+Minimize.Position = UDim2.new(1, -35, 0, 0)
+Minimize.BackgroundTransparency = 1
+Minimize.Text = "-"
+Minimize.Font = Enum.Font.GothamBold
+Minimize.TextSize = 20
+Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Container
+local Container = Instance.new("Frame", Frame)
+Container.Position = UDim2.new(0, 0, 0, 35)
+Container.Size = UDim2.new(1, 0, 1, -35)
+Container.BackgroundTransparency = 1
+
+-- Tombol Template
+local function createButton(name, callback)
+    local Btn = Instance.new("TextButton", Container)
+    Btn.Text = name
+    Btn.Size = UDim2.new(1, -20, 0, 35)
+    Btn.Position = UDim2.new(0, 10, 0, #Container:GetChildren() * 40 - 40)
+    Btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Btn.Font = Enum.Font.Gotham
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Btn.TextSize = 15
+    Btn.AutoButtonColor = true
+
+    local corner = Instance.new("UICorner", Btn)
+    corner.CornerRadius = UDim.new(0, 6)
+
+    local stroke = Instance.new("UIStroke", Btn)
+    stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.Thickness = 1
+
+    Btn.MouseButton1Click:Connect(callback)
+end
+
+-- Dropdown Map
+local DropDown = Instance.new("TextButton", Container)
+DropDown.Size = UDim2.new(1, -20, 0, 35)
+DropDown.Position = UDim2.new(0, 10, 0, #Container:GetChildren() * 40 - 40)
+DropDown.Text = "Select Map: " .. selectedMap
+DropDown.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+DropDown.Font = Enum.Font.Gotham
+DropDown.TextColor3 = Color3.fromRGB(255, 255, 255)
+DropDown.TextSize = 15
+
+local corner = Instance.new("UICorner", DropDown)
+corner.CornerRadius = UDim.new(0, 6)
+
+local maps = {"Map : 1", "Map : 2", "Map : 3"}
+local mapIndex = 1
+
+DropDown.MouseButton1Click:Connect(function()
+    mapIndex += 1
+    if mapIndex > #maps then mapIndex = 1 end
+    selectedMap = maps[mapIndex]
+    DropDown.Text = "Select Map: " .. selectedMap
+end)
+
+-- Toggle Auto Coin
+local toggleState = false
+local AutoBtn = Instance.new("TextButton", Container)
+AutoBtn.Size = UDim2.new(1, -20, 0, 35)
+AutoBtn.Position = UDim2.new(0, 10, 0, #Container:GetChildren() * 40 - 40)
+AutoBtn.Text = "Auto Coins: OFF"
+AutoBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+AutoBtn.Font = Enum.Font.Gotham
+AutoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoBtn.TextSize = 15
+
+local cornerAuto = Instance.new("UICorner", AutoBtn)
+cornerAuto.CornerRadius = UDim.new(0, 6)
+
+AutoBtn.MouseButton1Click:Connect(function()
+    toggleState = not toggleState
+    _G.autoSlider = toggleState
+    AutoBtn.Text = "Auto Coins: " .. (toggleState and "ON" or "OFF")
+    if toggleState then
+        coroutine.wrap(autoCoinFunc)()
+    end
+end)
+
+-- Tombol Get Best Pet
+createButton("Free Best Pet", giveBestPet)
+
+-- Minimize Logic
+local minimized = false
+Minimize.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    Container.Visible = not minimized
+    Minimize.Text = minimized and "+" or "-"
+    Frame.Size = minimized and UDim2.new(0, 200, 0, 35) or UDim2.new(0, 380, 0, 260)
+end)
