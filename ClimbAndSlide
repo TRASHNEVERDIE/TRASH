@@ -119,7 +119,7 @@ DropDown.TextSize = 15
 local corner = Instance.new("UICorner", DropDown)
 corner.CornerRadius = UDim.new(0, 6)
 
-local maps = {"Map : 1", "Map : 2", "Map : 3"}
+local maps = {"Map_1", "Map_2", "Map_3"}
 local mapIndex = 1
 
 DropDown.MouseButton1Click:Connect(function()
