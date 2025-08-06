@@ -1,0 +1,120 @@
+local player = game:GetService("Players").LocalPlayer
+local uis = game:GetService("UserInputService")
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "TRASHNEVERDIE_GUI"
+gui.ResetOnSpawn = false
+
+-- FRAME UTAMA
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 300, 0, 120)
+frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+
+local stroke = Instance.new("UIStroke", frame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(255, 0, 255)
+
+-- JUDUL
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, -40, 0, 40)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.Text = "TRASHNEVERDIE"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- WARNA-WARNI JUDUL
+task.spawn(function()
+	while task.wait(0.2) do
+		title.TextColor3 = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+	end
+end)
+
+-- MINIMIZE
+local minBtn = Instance.new("TextButton", frame)
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(1, -35, 0, 5)
+minBtn.Text = "-"
+minBtn.Font = Enum.Font.GothamBold
+minBtn.TextSize = 18
+minBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minBtn.BackgroundColor3 = Color3.fromRGB(80, 0, 80)
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 8)
+
+local isMinimized = false
+minBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	for _, obj in ipairs(frame:GetChildren()) do
+		if obj:IsA("GuiObject") and obj ~= title and obj ~= minBtn then
+			obj.Visible = not isMinimized
+		end
+	end
+	frame.Size = isMinimized and UDim2.new(0, 300, 0, 50) or UDim2.new(0, 300, 0, 120)
+end)
+
+-- TOGGLE BUTTON
+local toggle = Instance.new("TextButton", frame)
+toggle.Size = UDim2.new(0.9, 0, 0, 40)
+toggle.Position = UDim2.new(0.05, 0, 0, 60)
+toggle.Text = "Teleport OFF"
+toggle.Font = Enum.Font.GothamBold
+toggle.TextSize = 16
+toggle.BackgroundColor3 = Color3.fromRGB(60, 0, 90)
+toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 8)
+
+local isActive = false
+local humanoidRootPart = nil
+
+-- KOORDINAT TELEPORT
+local coords = {
+	Vector3.new(-421, 192, 556),
+	Vector3.new(-627, 579, 1135),
+	Vector3.new(-902, 690, 1223),
+	Vector3.new(-389, 1041, 2044),
+	Vector3.new(-756, 1525, 2060),
+	Vector3.new(-480, 1633, 2285),
+	Vector3.new(-84, 1929, 2114),
+	Vector3.new(-10, 2493, 2080),
+}
+
+-- UPDATE HumanoidRootPart
+local function updateHRP()
+	local char = player.Character or player.CharacterAdded:Wait()
+	humanoidRootPart = char:WaitForChild("HumanoidRootPart")
+end
+
+-- Dengarkan jika player respawn
+player.CharacterAdded:Connect(function()
+	updateHRP()
+end)
+
+-- Awal
+updateHRP()
+
+-- TELEPORT LOOP
+task.spawn(function()
+	while task.wait(0.1) do
+		if isActive and humanoidRootPart then
+			for _, pos in ipairs(coords) do
+				if not isActive then break end
+				humanoidRootPart.CFrame = CFrame.new(pos)
+				task.wait(0.1)
+			end
+		end
+	end
+end)
+
+-- KLIK TOGGLE
+toggle.MouseButton1Click:Connect(function()
+	isActive = not isActive
+	toggle.Text = isActive and "Teleport ON" or "Teleport OFF"
+	toggle.BackgroundColor3 = isActive and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(60, 0, 90)
+end)
