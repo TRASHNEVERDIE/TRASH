@@ -82,7 +82,7 @@ local coords = {
 	Vector3.new(-756, 1525, 2060),
 	Vector3.new(-480, 1633, 2285),
 	Vector3.new(-84, 1929, 2114),
-	Vector3.new(-10, 2493, 2080),
+	Vector3.new(3, 2493, 2046),
 }
 
 -- UPDATE HumanoidRootPart
