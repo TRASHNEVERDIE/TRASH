@@ -1,0 +1,451 @@
+-- == TRASHNEVERDIE HUB - FULL (FINAL) == --
+-- All features merged: Auto Sell, Fast Fishing, Bypass, Shop (boats/gears/weather/rods),
+-- Redeem Codes, Spawn/Despawn, Tabs UI, Rainbow border & time, Fade & Animations, Notifications
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Player = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+
+-- make sure PlayerGui exists
+local playerGui = Player:WaitForChild("PlayerGui")
+
+-- Safely obtain remotes (wrap in pcall for resilience)
+local function safeGet(name)
+    local ok, v = pcall(function()
+        return ReplicatedStorage.Packages._Index["sleitnick_net@0.2.0"].net[name]
+    end)
+    return ok and v or nil
+end
+
+local RFSellAllItems = safeGet("RF/SellAllItems")
+local REFishingCompleted = safeGet("RE/FishingCompleted")
+local RFUpdateFishingRadar = safeGet("RF/UpdateFishingRadar")
+local RFEquipOxygenTank = safeGet("RF/EquipOxygenTank")
+local RFPurchaseBoat = safeGet("RF/PurchaseBoat")
+local RFPurchaseGear = safeGet("RF/PurchaseGear")
+local RFPurchaseWeatherEvent = safeGet("RF/PurchaseWeatherEvent")
+local RFPurchaseFishingRod = safeGet("RF/PurchaseFishingRod")
+local RFRedeemCode = safeGet("RF/RedeemCode")
+local RFDespawnBoat = safeGet("RF/DespawnBoat")
+local RFSpawnBoat = safeGet("RF/SpawnBoat")
+
+-- ===== UI BASE =====
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TRASHNEVERDIE_GUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = playerGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 380, 0, 480)
+MainFrame.Position = UDim2.new(0.28, 0, 0.15, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(22,22,22)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 12)
+
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Thickness = 2
+
+-- animated rainbow border
+task.spawn(function()
+    local t = 0
+    while task.wait(0.05) do
+        t = t + 0.008
+        UIStroke.Color = Color3.fromHSV(t % 1, 1, 1)
+    end
+end)
+
+-- Title
+local TitleBar = Instance.new("Frame", MainFrame)
+TitleBar.Size = UDim2.new(1,0,0,44)
+TitleBar.Position = UDim2.new(0,0,0,0)
+TitleBar.BackgroundTransparency = 1
+
+local TitleLabel = Instance.new("TextLabel", TitleBar)
+TitleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+TitleLabel.Position = UDim2.new(0.02,0,0,0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "TRASHNEVERDIE HUB"
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 18
+TitleLabel.TextColor3 = Color3.fromRGB(255,255,255)
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Rainbow Time Label
+local TimeLabel = Instance.new("TextLabel", TitleBar)
+TimeLabel.Size = UDim2.new(0,140,1,0)
+TimeLabel.AnchorPoint = Vector2.new(1,0)
+TimeLabel.Position = UDim2.new(1,-80,0,0)
+TimeLabel.BackgroundTransparency = 1
+TimeLabel.Font = Enum.Font.GothamBold
+TimeLabel.TextSize = 14
+TimeLabel.TextXAlignment = Enum.TextXAlignment.Right
+TimeLabel.TextColor3 = Color3.new(1,1,1)
+
+task.spawn(function()
+    local t = 0
+    while task.wait(0.12) do
+        local d = os.date("*t")
+        TimeLabel.Text = string.format("%02d:%02d:%02d", d.hour, d.min, d.sec)
+        t = t + 0.01
+        TimeLabel.TextColor3 = Color3.fromHSV(t % 1, 1, 1)
+    end
+end)
+
+-- Minimize Button
+local MinimizeBtn = Instance.new("TextButton", TitleBar)
+MinimizeBtn.Size = UDim2.new(0,40,0,28)
+MinimizeBtn.Position = UDim2.new(1,-30,0,8)
+MinimizeBtn.AnchorPoint = Vector2.new(1,0)
+MinimizeBtn.BackgroundColor3 = Color3.fromRGB(46,46,46)
+MinimizeBtn.Text = "_"
+MinimizeBtn.Font = Enum.Font.GothamBold
+MinimizeBtn.TextSize = 20
+MinimizeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+MinimizeBtn.AutoButtonColor = true
+
+-- Container for content (below tabs area)
+local ContentHolder = Instance.new("Frame", MainFrame)
+ContentHolder.Size = UDim2.new(1,-10,1,-88)
+ContentHolder.Position = UDim2.new(0,5,0,80)
+ContentHolder.BackgroundTransparency = 1
+
+-- Fade-in setup: set transparency initially then tween in
+MainFrame.BackgroundTransparency = 1
+for _, v in pairs(MainFrame:GetDescendants()) do
+    if v:IsA("TextLabel") or v:IsA("TextButton") then
+        v.TextTransparency = 1
+    end
+end
+
+task.spawn(function()
+    TweenService:Create(MainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 0}):Play()
+    for _, v in pairs(MainFrame:GetDescendants()) do
+        if v:IsA("TextLabel") or v:IsA("TextButton") then
+            TweenService:Create(v, TweenInfo.new(0.6, Enum.EasingStyle.Quad), {TextTransparency = 0}):Play()
+        end
+    end
+end)
+
+-- Tabs bar
+local TabsBar = Instance.new("Frame", MainFrame)
+TabsBar.Size = UDim2.new(1, -12, 0, 36)
+TabsBar.Position = UDim2.new(0,6,0,44)
+TabsBar.BackgroundTransparency = 1
+
+local TabListLayout = Instance.new("UIListLayout", TabsBar)
+TabListLayout.FillDirection = Enum.FillDirection.Horizontal
+TabListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+TabListLayout.Padding = UDim.new(0,8)
+
+-- table to store tabs frames
+local Tabs = {}
+local CurrentTabFrame = nil
+
+local function CreateTab(name)
+    local btn = Instance.new("TextButton", TabsBar)
+    btn.Size = UDim2.new(0,88,1,0)
+    btn.Text = name
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.AutoButtonColor = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+
+    local frame = Instance.new("ScrollingFrame", ContentHolder)
+    frame.Name = name .. "_Frame"
+    frame.Size = UDim2.new(1, -10, 1, 0)
+    frame.Position = UDim2.new(0,5,0,0)
+    frame.BackgroundTransparency = 1
+    frame.CanvasSize = UDim2.new(0,0,0,0)
+    frame.ScrollBarThickness = 6
+    frame.Visible = false
+
+    local layout = Instance.new("UIListLayout", frame)
+    layout.Padding = UDim.new(0,8)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+    btn.MouseButton1Click:Connect(function()
+        -- hide current, show this
+        if CurrentTabFrame then CurrentTabFrame.Visible = false end
+        frame.Visible = true
+        CurrentTabFrame = frame
+    end)
+
+    if not CurrentTabFrame then
+        frame.Visible = true
+        CurrentTabFrame = frame
+    end
+
+    Tabs[name] = {
+        Button = btn,
+        Frame = frame
+    }
+    return frame
+end
+
+-- Helpers to create UI elements inside frames
+local function CreateToggle(parent, label, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0, 340, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(150,0,0)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 16
+    btn.Text = "OFF - "..label
+    btn.AutoButtonColor = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,8)
+    local state = false
+    btn.MouseButton1Click:Connect(function()
+        state = not state
+        if state then
+            btn.BackgroundColor3 = Color3.fromRGB(0,150,0)
+            btn.Text = "ON - "..label
+        else
+            btn.BackgroundColor3 = Color3.fromRGB(150,0,0)
+            btn.Text = "OFF - "..label
+        end
+        pcall(function() callback(state) end)
+        -- small notification
+        StarterGui:SetCore("SendNotification", {Title = "TRASHNEVERDIE", Text = label .. (state and " enabled" or " disabled"), Duration = 2})
+    end)
+    return btn
+end
+
+local function CreateButton(parent, label, callback)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0, 340, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(48,48,48)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 16
+    btn.Text = label
+    btn.AutoButtonColor = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,8)
+    btn.MouseButton1Click:Connect(function()
+        pcall(function() callback() end)
+        StarterGui:SetCore("SendNotification", {Title = "TRASHNEVERDIE", Text = label, Duration = 2})
+    end)
+    return btn
+end
+
+-- ========== TAB: Main ==========
+local MainTab = CreateTab("Main")
+
+-- Auto Sell toggle
+local autoSellEnabled = false
+CreateToggle(MainTab, "Auto Sell", function(state) autoSellEnabled = state end)
+
+-- Fast Fishing toggle
+local fastFishingEnabled = false
+CreateToggle(MainTab, "Fast Fishing", function(state) fastFishingEnabled = state end)
+
+-- Bypass buttons
+CreateButton(MainTab, "Bypass Fishing Radar", function()
+    if RFUpdateFishingRadar then
+        pcall(function() RFUpdateFishingRadar:InvokeServer(false) end)
+    end
+end)
+CreateButton(MainTab, "Bypass Diving Gear", function()
+    if RFEquipOxygenTank then
+        pcall(function() RFEquipOxygenTank:InvokeServer(105) end)
+    end
+end)
+
+-- ========== Background loops for Auto Sell & Fast Fishing ==========
+-- Auto Sell loop (safe)
+task.spawn(function()
+    while task.wait(0.8) do
+        if autoSellEnabled and RFSellAllItems then
+            pcall(function() RFSellAllItems:InvokeServer() end)
+        end
+    end
+end)
+
+-- Fast Fishing loop (safe)
+task.spawn(function()
+    while task.wait(0.1) do
+        if fastFishingEnabled and REFishingCompleted then
+            pcall(function() REFishingCompleted:FireServer() end)
+        end
+    end
+end)
+
+-- ========== TAB: Shop ==========
+local ShopTab = CreateTab("Shop")
+
+local boats = {
+    {name = "Small Boat", id = 1},
+    {name = "Kayak", id = 2},
+    {name = "Jetski", id = 3},
+    {name = "Highfield Boat", id = 4},
+    {name = "Speed Boat", id = 5},
+    {name = "Fishing Boat", id = 6},
+    {name = "Mini Yacht", id = 7}
+}
+for _, b in ipairs(boats) do
+    CreateButton(ShopTab, "Buy "..b.name, (function(id, nm)
+        return function()
+            if RFPurchaseBoat then pcall(function() RFPurchaseBoat:InvokeServer(id) end) end
+            StarterGui:SetCore("SendNotification", {Title="Shop", Text="Purchased "..nm, Duration=2})
+        end
+    end)(b.id, b.name))
+end
+
+CreateButton(ShopTab, "Buy Fishing Radar", function()
+    if RFPurchaseGear then pcall(function() RFPurchaseGear:InvokeServer(81) end) end
+end)
+CreateButton(ShopTab, "Buy Diving Gear", function()
+    if RFPurchaseGear then pcall(function() RFPurchaseGear:InvokeServer(105) end) end
+end)
+
+local weathers = {"Cloudy", "Snow", "Storm", "Radiant", "SharkHunt", "Wind"}
+for _, w in ipairs(weathers) do
+    CreateButton(ShopTab, "Buy "..w.." Weather", (function(weather)
+        return function()
+            if RFPurchaseWeatherEvent then pcall(function() RFPurchaseWeatherEvent:InvokeServer(weather) end) end
+        end
+    end)(w))
+end
+
+local rods = {
+    {name = "Luck Rod", id = 79},
+    {name = "Carbon Rod", id = 76},
+    {name = "Grass Rod", id = 85},
+    {name = "Damascus Rod", id = 77},
+    {name = "Ice Rod", id = 78},
+    {name = "Lucky Rod", id = 4},
+    {name = "Midnight Rod", id = 80},
+    {name = "Steampunk Rod", id = 6},
+    {name = "Chrome Rod", id = 7}
+}
+for _, r in ipairs(rods) do
+    CreateButton(ShopTab, "Buy "..r.name, (function(id, nm)
+        return function()
+            if RFPurchaseFishingRod then pcall(function() RFPurchaseFishingRod:InvokeServer(id) end) end
+            StarterGui:SetCore("SendNotification", {Title="Shop", Text="Purchased "..nm, Duration=2})
+        end
+    end)(r.id, r.name))
+end
+
+-- ========== TAB: Codes ==========
+local CodesTab = CreateTab("Codes")
+CreateButton(CodesTab, "Redeem All Codes", function()
+    local codes = {"ARMOR","SHARKSSS","MUTATE","100M","THEWHEEL","FREEBIES","WOWSPINS"}
+    for _, c in ipairs(codes) do
+        if RFRedeemCode then pcall(function() RFRedeemCode:InvokeServer(c) end) end
+        task.wait(0.35)
+    end
+    StarterGui:SetCore("SendNotification", {Title="Codes", Text="Redeem attempted for all codes", Duration=2})
+end)
+-- Display codes list label
+local CodesLabel = Instance.new("TextLabel", CodesTab)
+CodesLabel.Size = UDim2.new(0,340,0,30)
+CodesLabel.BackgroundTransparency = 1
+CodesLabel.Text = "Codes: ARMOR, SHARKSSS, MUTATE, 100M, THEWHEEL, FREEBIES, WOWSPINS"
+CodesLabel.Font = Enum.Font.Gotham
+CodesLabel.TextSize = 12
+CodesLabel.TextColor3 = Color3.fromRGB(200,200,200)
+CodesLabel.TextWrapped = true
+
+-- ========== TAB: Misc ==========
+local MiscTab = CreateTab("Misc")
+
+CreateButton(MiscTab, "Despawn Current Boat", function()
+    if RFDespawnBoat then pcall(function() RFDespawnBoat:InvokeServer() end) end
+end)
+
+for _, b in ipairs(boats) do
+    CreateButton(MiscTab, "Spawn "..b.name, (function(id, nm)
+        return function()
+            if RFSpawnBoat then pcall(function() RFSpawnBoat:InvokeServer(id) end) end
+            StarterGui:SetCore("SendNotification", {Title="Boat", Text="Spawned "..nm, Duration=2})
+        end
+    end)(b.id, b.name))
+end
+
+-- Extra small utilities (optional)
+CreateButton(MiscTab, "Center GUI", function()
+    MainFrame:TweenPosition(UDim2.new(0.28,0,0.15,0), "Out", "Quad", 0.4, true)
+end)
+CreateButton(MiscTab, "Close GUI", function()
+    -- tiny fade out then destroy
+    local tw = TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad), {BackgroundTransparency = 1})
+    tw:Play()
+    wait(0.35)
+    MainFrame:Destroy()
+end)
+
+-- ========== Update scrolling canvas sizes automatically ==========
+local function updateCanvasSizes()
+    for _, tab in pairs(Tabs) do
+        local frame = tab.Frame
+        local layout = frame:FindFirstChildOfClass("UIListLayout")
+        if layout then
+            local contentY = layout.AbsoluteContentSize.Y
+            frame.CanvasSize = UDim2.new(0,0,0, contentY + 16)
+        end
+    end
+end
+
+-- Build Tabs table for updateCanvasSizes
+for name, info in pairs(Tabs) do
+    -- already in Tabs
+end
+
+-- make sure Tabs table is filled
+-- (CreateTab has already inserted into Tabs on creation above.)
+updateCanvasSizes()
+-- call periodically to adapt if items change
+task.spawn(function()
+    while task.wait(1) do
+        pcall(updateCanvasSizes)
+    end
+end)
+
+-- ========== Minimize/Maximize anim (tie to MinimizeBtn) ==========
+local isMin = false
+MinimizeBtn.MouseButton1Click:Connect(function()
+    isMin = not isMin
+    if isMin then
+        -- animate small
+        TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 380, 0, 48)}):Play()
+        -- hide content after tween
+        task.delay(0.36, function()
+            for _, child in pairs(MainFrame:GetChildren()) do
+                if child ~= TitleBar and child ~= TabsBar and child ~= MinimizeBtn and child.Name ~= "UICorner" and child.Name ~= "UIStroke" then
+                    if child:IsA("Frame") or child:IsA("ImageLabel") or child:IsA("ScrollingFrame") then
+                        child.Visible = false
+                    end
+                end
+            end
+        end)
+    else
+        -- restore
+        for _, child in pairs(MainFrame:GetChildren()) do
+            if child:IsA("Frame") or child:IsA("ScrollingFrame") then
+                child.Visible = true
+            end
+        end
+        TweenService:Create(MainFrame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 380, 0, 480)}):Play()
+    end
+end)
+
+-- initial notification
+StarterGui:SetCore("SendNotification", {Title = "TRASHNEVERDIE", Text = "Hub loaded successfully!", Duration = 4})
+
+-- safety prints
+print("TRASHNEVERDIE HUB | All features loaded (if remotes available).")
+
+-- end of script
